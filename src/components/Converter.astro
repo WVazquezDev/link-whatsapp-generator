@@ -1,0 +1,187 @@
+---
+import ArrowLeft from "./icons/ArrowLeft.astro";
+import UserCircle from "./icons/userCircle.astro";
+import Phone from "./icons/Phone.astro";
+import DotsVertical from "./icons/DotsVertical.astro";
+import Camera from "./icons/Camera.astro";
+import Microphone from "./icons/Microphone.astro";
+import Paperclip from "./icons/Paperclip.astro";
+import MoodSmile from "./icons/MoodSmile.astro";
+
+import { phone_prefixes } from "../utils/constants.js";
+---
+
+<section class="grid grid-cols-3 mt-16">
+  <div class="p-5 col-span-2">
+    <form action="#">
+      <div class="grid grid-cols-4 gap-x-5">
+        <div class="numberItems">
+          <label for="prefijo">Prefijo</label>
+          <select name="prefijo">
+            <option value="" selected disabled>Elegir prefijo</option>
+            {
+              phone_prefixes.map((prefijo) => (
+                <option
+                  class="flex items-center justify-between px-5"
+                  key={prefijo.iso2}
+                  value={prefijo.prefix}
+                >
+                  <span>{prefijo.country}</span>
+                  <span>{prefijo.prefix}</span>
+                </option>
+              ))
+            }
+          </select>
+        </div>
+        <div class="numberItems col-span-3">
+          <label for="celNumber">Numero del WhatsApp</label>
+          <input
+            name="celNumber"
+            id="celNumber"
+            type="tel"
+            placeholder="ej.6651237654"
+            maxlength="10"
+          />
+        </div>
+      </div>
+      <div class="flex flex-col resize-none mt-5">
+        <label for="message">Escribe tu mensaje</label>
+        <textarea
+          name="message"
+          id="message"
+          rows="12"
+          placeholder="ej. Saludos 👋, como se encuentran..."></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="">
+    <!-- Phone -->
+    <div
+      class="relative max-w-72 min-h-120 mx-auto border-4 border-black rounded-3xl bg-orange-50 shadow"
+    >
+      <!-- header -->
+      <div
+        class="bg-white/80 rounded-t-3xl p-3 flex justify-between items-center"
+      >
+        <!-- exit and contact -->
+        <div class="flex gap-x-1 items-center">
+          <ArrowLeft />
+          <UserCircle />
+          <span class="text-xs" id="contact">Contacto</span>
+        </div>
+        <!-- options contact -->
+        <div class="flex gap-x-1">
+          <Phone />
+          <DotsVertical />
+        </div>
+      </div>
+      <!-- messages -->
+      <div class="flex justify-end">
+        <div
+          class="m-4 bg-[#E7FFDB] shadow px-3 py-2 relative rounded-lg w-fit"
+        >
+          <div
+            class="absolute top-0 -right-2 w-0 h-0
+           border-t-10 border-t-transparent
+           border-l-10 border-l-[#E7FFDB]"
+          >
+          </div>
+          <p class="text-left text-xs" id="messageBox"></p>
+        </div>
+      </div>
+      <!-- input box -->
+      <div
+        class="absolute w-full flex justify-between items-center bottom-2 px-2"
+      >
+        <!-- input message -->
+        <div
+          class="grid grid-cols-7 gap-x-1 items-center bg-white rounded-full p-2 text-gray-500 shadow"
+        >
+          <MoodSmile />
+          <span class="col-span-4 text-xs">Type a message</span>
+          <Paperclip />
+          <Camera />
+        </div>
+        <!-- voice button -->
+        <div
+          class="flex justify-center items-center p-2 rounded-full bg-green-600 shadow"
+        >
+          <Microphone class="text-white" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .numberItems {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  input,
+  select,
+  textarea {
+    background-color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    resize: none;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<style is:global>
+  .spanError {
+    color: red;
+    font-size: 12px;
+    padding: 0px 16px;
+  }
+</style>
+
+<script>
+  const numPhone = document.getElementById("celNumber") as HTMLInputElement;
+  const areaMessage = document.getElementById("message") as HTMLInputElement;
+
+  const txtContact = document.getElementById("contact") as HTMLSpanElement;
+  const txtMessage = document.getElementById("messageBox") as HTMLSpanElement;
+  let spanError = document.getElementById("phone-error") as HTMLSpanElement;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    numPhone?.addEventListener("change", (e) => {
+      e.preventDefault();
+
+      spanError?.remove();
+
+      if (numPhone.value === "") {
+        txtContact.innerHTML = "Contacto";
+        return;
+      }
+      let num = numPhone.value;
+
+      if (num.length < 10) {
+        spanError = document.createElement("span");
+        spanError.textContent = "El numero introducido NO es valido";
+        spanError.classList.add("spanError");
+        spanError.id = "phone-error";
+
+        numPhone.insertAdjacentElement("afterend", spanError);
+        return;
+      }
+
+      txtContact.innerHTML = numPhone.value;
+    });
+
+    areaMessage.addEventListener("input", (e) => {
+      e.preventDefault();
+
+      txtMessage.innerHTML = areaMessage.value;
+    });
+  });
+</script>
