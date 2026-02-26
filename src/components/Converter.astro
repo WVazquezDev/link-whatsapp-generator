@@ -52,6 +52,9 @@ import { phone_prefixes } from "../utils/constants.js";
           rows="12"
           placeholder="ej. Saludos 👋, como se encuentran..."></textarea>
       </div>
+      <div class="flex items-center justify-center mt-5">
+        <button class="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95 text-white px-4 py-2 shadow transition duration-75 ">Generar enlace</button>
+      </div>
     </form>
   </div>
   <div class="">
@@ -86,7 +89,7 @@ import { phone_prefixes } from "../utils/constants.js";
            border-l-10 border-l-[#E7FFDB]"
           >
           </div>
-          <p class="text-left text-xs" id="messageBox"></p>
+          <p class="max-w-64 text-end text-xs text-pretty whitespace-pre-wrap break-all overflow-hidden" id="messageBox"></p>
         </div>
       </div>
       <!-- input box -->
