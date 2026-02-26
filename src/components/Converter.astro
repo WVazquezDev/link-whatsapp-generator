@@ -1,7 +1,7 @@
 ---
 import ArrowLeft from "./icons/ArrowLeft.astro";
-import UserCircle from "./icons/userCircle.astro";
 import Phone from "./icons/Phone.astro";
+import UserCircle from "./icons/userCircle.astro";
 import DotsVertical from "./icons/DotsVertical.astro";
 import Camera from "./icons/Camera.astro";
 import Microphone from "./icons/Microphone.astro";
@@ -11,13 +11,13 @@ import MoodSmile from "./icons/MoodSmile.astro";
 import { phone_prefixes } from "../utils/constants.js";
 ---
 
-<section class="grid grid-cols-3 mt-16">
+<section class="grid grid-cols-3 mt-5">
   <div class="p-5 col-span-2">
     <form action="#">
       <div class="grid grid-cols-4 gap-x-5">
         <div class="numberItems">
           <label for="prefijo">Prefijo</label>
-          <select name="prefijo">
+          <select name="prefijo" id="prefijo">
             <option value="" selected disabled>Elegir prefijo</option>
             {
               phone_prefixes.map((prefijo) => (
@@ -49,11 +49,30 @@ import { phone_prefixes } from "../utils/constants.js";
         <textarea
           name="message"
           id="message"
-          rows="12"
+          rows="10"
           placeholder="ej. Saludos 👋, como se encuentran..."></textarea>
       </div>
       <div class="flex items-center justify-center mt-5">
-        <button class="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95 text-white px-4 py-2 shadow transition duration-75 ">Generar enlace</button>
+        <button
+          id="btnGenerate"
+          class="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 hover:cursor-pointer active:scale-95 text-white px-4 py-2 shadow transition duration-75"
+          >Generar enlace</button
+        >
+      </div>
+      <div
+        id="linkContainer"
+        class="hidden flex-col items-center justify-center mt-5"
+      >
+        <button
+          id="btnCopy"
+          class="w-full bg-green-300 hover:bg-green-400 hover:cursor-pointer active:bg-green-500 py-1 px-4"
+          >Copiar</button
+        >
+        <span
+          id="waLink"
+          class="w-full bg-white text-center text-gray-500 py-3 px-4"
+          >https://wa.me/3141060975?text=Hola,%20quisiera%20saber%20mas%20del%20servicio</span
+        >
       </div>
     </form>
   </div>
@@ -89,7 +108,11 @@ import { phone_prefixes } from "../utils/constants.js";
            border-l-10 border-l-[#E7FFDB]"
           >
           </div>
-          <p class="max-w-64 text-end text-xs text-pretty whitespace-pre-wrap break-all overflow-hidden" id="messageBox"></p>
+          <p
+            class="max-w-64 text-xs leading-4 whitespace-pre-wrap wrap-break-word"
+            id="messageBox"
+          >
+          </p>
         </div>
       </div>
       <!-- input box -->
@@ -149,11 +172,21 @@ import { phone_prefixes } from "../utils/constants.js";
 </style>
 
 <script>
+  const selPrefijo = document.getElementById("prefijo") as HTMLSelectElement;
   const numPhone = document.getElementById("celNumber") as HTMLInputElement;
   const areaMessage = document.getElementById("message") as HTMLInputElement;
+  const btnGenerate = document.getElementById(
+    "btnGenerate",
+  ) as HTMLButtonElement;
 
   const txtContact = document.getElementById("contact") as HTMLSpanElement;
   const txtMessage = document.getElementById("messageBox") as HTMLSpanElement;
+  const divLinkContainer = document.getElementById(
+    "linkContainer",
+  ) as HTMLSpanElement;
+  const txtWhatsAppLink = document.getElementById("waLink") as HTMLSpanElement;
+  const btnCopy = document.getElementById("btnCopy") as HTMLButtonElement;
+
   let spanError = document.getElementById("phone-error") as HTMLSpanElement;
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -185,6 +218,35 @@ import { phone_prefixes } from "../utils/constants.js";
       e.preventDefault();
 
       txtMessage.innerHTML = areaMessage.value;
+    });
+
+    btnGenerate.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const prefijo = selPrefijo.value.replace("+", "");
+      const phone = numPhone.value.replace(" ", "");
+      const message = areaMessage.value.replaceAll(" ", "%20");
+
+      let whatasppLink = `https://wa.me/${prefijo}${phone}`;
+
+      //Validaciones
+
+      if (message !== "") {
+        whatasppLink = whatasppLink + "?text=" + message;
+      }
+
+      divLinkContainer.classList.replace("hidden", "flex");
+      txtWhatsAppLink.innerHTML = whatasppLink;
+      return;
+    });
+
+    btnCopy.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      try {
+        navigator.clipboard.writeText(txtWhatsAppLink.textContent);
+        btnCopy.textContent = "✅ Copiado!";
+      } catch (e) {}
     });
   });
 </script>
