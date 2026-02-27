@@ -193,6 +193,16 @@ import { phone_prefixes } from "../utils/constants.js";
   let spanError = document.getElementById("phone-error") as HTMLSpanElement;
 
   document.addEventListener("DOMContentLoaded", () => {
+    numPhone.addEventListener("input", () => {
+      numPhone.value = numPhone.value.replace(/\D/g, "");
+    });
+
+    areaMessage.addEventListener("input", (e) => {
+      e.preventDefault();
+
+      txtMessage.innerHTML = areaMessage.value;
+    });
+
     numPhone?.addEventListener("change", (e) => {
       e.preventDefault();
       btnGenerate.disabled = true;
@@ -202,6 +212,7 @@ import { phone_prefixes } from "../utils/constants.js";
         txtContact.innerHTML = "Contacto";
         return;
       }
+      numPhone.value = numPhone.value.replace(/\s+/g, "");
       let num = numPhone.value;
 
       if (num.length < 10) {
@@ -218,7 +229,7 @@ import { phone_prefixes } from "../utils/constants.js";
         btnGenerate.disabled = false;
       }
 
-      txtContact.innerHTML = numPhone.value;
+      txtContact.innerHTML = num;
     });
 
     selPrefijo.addEventListener("change", (e) => {
@@ -227,12 +238,6 @@ import { phone_prefixes } from "../utils/constants.js";
       if (numPhone.value.length === 10) {
         btnGenerate.disabled = false;
       }
-    });
-
-    areaMessage.addEventListener("input", (e) => {
-      e.preventDefault();
-
-      txtMessage.innerHTML = areaMessage.value;
     });
 
     btnGenerate.addEventListener("click", (e) => {
