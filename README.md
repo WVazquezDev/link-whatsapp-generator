@@ -1,44 +1,106 @@
-# Astro Starter Kit: Minimal
+# LinkZapWV - WhatsApp Link Generator
 
-```sh
-pnpm create astro@latest -- --template minimal
+Aplicacion web para generar enlaces directos de WhatsApp (`wa.me`) con prefijo internacional, numero de telefono y mensaje opcional, sin guardar datos del usuario.
+
+## Vista general
+
+Este proyecto permite:
+- Seleccionar prefijo internacional desde una lista de paises.
+- Validar que el telefono tenga 10 digitos (segun la logica actual).
+- Escribir un mensaje personalizado.
+- Generar el enlace de WhatsApp listo para usar.
+- Copiar el enlace al portapapeles con un clic.
+- Ver una previsualizacion tipo chat dentro de la interfaz.
+
+## Tecnologias
+
+- [Astro 5](https://docs.astro.build/)
+- [Tailwind CSS 4](https://tailwindcss.com/)
+- JavaScript (cliente)
+- Fuente `Onest Variable` via `@fontsource-variable/onest`
+
+## Requisitos previos
+
+- [Node.js](https://nodejs.org/) (version LTS recomendada)
+- [pnpm](https://pnpm.io/) (el proyecto usa `pnpm@10`)
+
+## Instalacion y ejecucion local
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/WVazquezDev/link-whatsapp-generator.git
+cd link-whatsapp-generator
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+2. Instala dependencias:
 
-## 🚀 Project Structure
+```bash
+pnpm install
+```
 
-Inside of your Astro project, you'll see the following folders and files:
+3. Inicia el servidor de desarrollo:
+
+```bash
+pnpm dev
+```
+
+4. Abre en el navegador:
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+http://localhost:4321
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Scripts disponibles
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- `pnpm dev`: inicia el entorno de desarrollo.
+- `pnpm build`: crea el build de produccion en `dist/`.
+- `pnpm preview`: sirve localmente el build generado.
+- `pnpm astro`: ejecuta comandos CLI de Astro.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Como usar la aplicacion
 
-## 🧞 Commands
+1. Elige un prefijo internacional.
+2. Escribe el numero de telefono.
+3. (Opcional) Escribe un mensaje.
+4. Haz clic en `Generar enlace`.
+5. Copia el enlace generado y compartelo donde lo necesites.
 
-All commands are run from the root of the project, from a terminal:
+Ejemplo de salida:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+```text
+https://wa.me/521234567890?text=Hola%20quiero%20mas%20informacion
+```
 
-## 👀 Want to learn more?
+## Estructura del proyecto
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-# link-whatsapp-generator
+```text
+.
+├── public/                     # Iconos e imagenes estaticas
+├── src/
+│   ├── components/
+│   │   ├── Converter.astro     # Formulario y logica principal
+│   │   ├── icons/              # Iconos de la interfaz
+│   │   └── layout/             # Navbar y Footer
+│   ├── Layouts/
+│   │   └── Layout.astro        # Estructura base de la pagina
+│   ├── pages/
+│   │   └── index.astro         # Ruta principal
+│   ├── styles/
+│   │   └── global.css          # Import de Tailwind
+│   └── utils/
+│       └── constants.js        # Lista de prefijos telefonicos
+├── astro.config.mjs
+├── package.json
+└── README.md
+```
+
+## Notas para desarrollo
+
+- La validacion actual del telefono exige 10 digitos para habilitar el boton de generar.
+- El mensaje se codifica reemplazando espacios por `%20`.
+- El listado de prefijos se mantiene en `src/utils/constants.js`.
+
+## Autor
+
+- GitHub: [@WVazquezDev](https://github.com/WVazquezDev)
