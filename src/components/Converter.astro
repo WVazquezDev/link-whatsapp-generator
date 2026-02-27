@@ -11,13 +11,13 @@ import MoodSmile from "./icons/MoodSmile.astro";
 import { phone_prefixes } from "../utils/constants.js";
 ---
 
-<section class="grid grid-cols-3 mt-5">
-  <div class="p-5 col-span-2">
+<section class="grid sm:grid-cols-2 md:grid-cols-3 mt-5">
+  <div class="p-5 md:col-span-2">
     <form action="#">
-      <div class="grid grid-cols-4 gap-x-5">
+      <div class="grid sm:grid-cols-3 md:grid-cols-4 gap-x-2 md:gap-x-5">
         <div class="numberItems">
           <label for="prefijo">Prefijo</label>
-          <select name="prefijo" id="prefijo">
+          <select name="prefijo" id="prefijo" class="text-xs md:text-base">
             <option value="" selected disabled>Elegir prefijo</option>
             {
               phone_prefixes.map((prefijo) => (
@@ -33,14 +33,15 @@ import { phone_prefixes } from "../utils/constants.js";
             }
           </select>
         </div>
-        <div class="numberItems col-span-3">
-          <label for="celNumber">Numero del WhatsApp</label>
+        <div class="numberItems col-span-2 md:col-span-3">
+          <label for="celNumber">Telefono</label>
           <input
             name="celNumber"
             id="celNumber"
             type="tel"
             placeholder="ej.6651237654"
             maxlength="10"
+            class="text-xs md:text-base"
           />
         </div>
       </div>
@@ -55,8 +56,12 @@ import { phone_prefixes } from "../utils/constants.js";
       <div class="flex items-center justify-center mt-5">
         <button
           id="btnGenerate"
-          class="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 hover:cursor-pointer active:scale-95 text-white px-4 py-2 shadow transition duration-75"
-          >Generar enlace</button
+          class="w-full
+          bg-green-600 hover:bg-green-700 active:bg-green-800 disabled:bg-green-400
+          hover:cursor-pointer disabled:cursor-none
+          active:scale-95 disabled:active:scale-100
+          disabled:text-white/80 text-white px-4 py-2 shadow transition duration-75"
+          disabled>Generar enlace</button
         >
       </div>
       <div
@@ -70,13 +75,11 @@ import { phone_prefixes } from "../utils/constants.js";
         >
         <span
           id="waLink"
-          class="w-full bg-white text-center text-gray-500 py-3 px-4"
-          >https://wa.me/3141060975?text=Hola,%20quisiera%20saber%20mas%20del%20servicio</span
-        >
+          class="w-full bg-white text-center text-gray-500 py-3 px-4"></span>
       </div>
     </form>
   </div>
-  <div class="">
+  <div class="hidden sm:block">
     <!-- Phone -->
     <div
       class="relative max-w-72 min-h-120 mx-auto border-4 border-black rounded-3xl bg-orange-50 shadow"
@@ -192,7 +195,7 @@ import { phone_prefixes } from "../utils/constants.js";
   document.addEventListener("DOMContentLoaded", () => {
     numPhone?.addEventListener("change", (e) => {
       e.preventDefault();
-
+      btnGenerate.disabled = true;
       spanError?.remove();
 
       if (numPhone.value === "") {
@@ -211,7 +214,19 @@ import { phone_prefixes } from "../utils/constants.js";
         return;
       }
 
+      if (selPrefijo.value !== "") {
+        btnGenerate.disabled = false;
+      }
+
       txtContact.innerHTML = numPhone.value;
+    });
+
+    selPrefijo.addEventListener("change", (e) => {
+      e.preventDefault();
+      btnGenerate.disabled = true;
+      if (numPhone.value.length === 10) {
+        btnGenerate.disabled = false;
+      }
     });
 
     areaMessage.addEventListener("input", (e) => {
@@ -242,7 +257,6 @@ import { phone_prefixes } from "../utils/constants.js";
 
     btnCopy.addEventListener("click", (e) => {
       e.preventDefault();
-
       try {
         navigator.clipboard.writeText(txtWhatsAppLink.textContent);
         btnCopy.textContent = "✅ Copiado!";
