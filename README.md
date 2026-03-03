@@ -1,28 +1,56 @@
-# LinkZapWV - WhatsApp Link Generator
+# LinkZapWV | Generador de enlaces de WhatsApp
 
-Aplicacion web para generar enlaces directos de WhatsApp (`wa.me`) con prefijo internacional, numero de telefono y mensaje opcional, sin guardar datos del usuario.
+Aplicacion web construida con **Astro** para crear enlaces directos de WhatsApp (`https://wa.me/...`) de forma rapida, con prefijo internacional, numero de telefono, mensaje opcional y codigo QR descargable.
 
-## Vista general
+## Tabla de contenido
 
-Este proyecto permite:
-- Seleccionar prefijo internacional desde una lista de paises.
-- Validar que el telefono tenga 10 digitos (segun la logica actual).
-- Escribir un mensaje personalizado.
-- Generar el enlace de WhatsApp listo para usar.
-- Copiar el enlace al portapapeles con un clic.
-- Ver una previsualizacion tipo chat dentro de la interfaz.
+- [Descripcion](#descripcion)
+- [Funciones principales](#funciones-principales)
+- [Tecnologias](#tecnologias)
+- [Requisitos previos](#requisitos-previos)
+- [Instalacion y ejecucion local](#instalacion-y-ejecucion-local)
+- [Como usar la aplicacion](#como-usar-la-aplicacion)
+- [Scripts disponibles](#scripts-disponibles)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Detalles tecnicos importantes](#detalles-tecnicos-importantes)
+- [Personalizacion rapida](#personalizacion-rapida)
+- [Autor](#autor)
+
+## Descripcion
+
+**LinkZapWV** ayuda a generar links listos para abrir chat en WhatsApp sin guardar informacion del usuario.
+
+Caso de uso comun:
+
+- Compartir un numero con mensaje predefinido para ventas, soporte o contacto.
+- Evitar errores al escribir manualmente un enlace `wa.me`.
+- Entregar tambien un QR para abrir el chat desde otro dispositivo.
+
+## Funciones principales
+
+- Seleccion de prefijo internacional por pais.
+- Validacion de telefono (solo numeros, 10 digitos segun la logica actual).
+- Mensaje opcional incluido en el enlace usando `encodeURIComponent`.
+- Generacion de enlace de WhatsApp en formato `wa.me`.
+- Copia del enlace al portapapeles con un clic.
+- Generacion de codigo QR del enlace.
+- Descarga del QR en formato PNG.
+- Vista previa tipo chat para mostrar contacto y mensaje.
 
 ## Tecnologias
 
 - [Astro 5](https://docs.astro.build/)
 - [Tailwind CSS 4](https://tailwindcss.com/)
-- JavaScript (cliente)
-- Fuente `Onest Variable` via `@fontsource-variable/onest`
+- JavaScript del lado del cliente
+- [qrcode](https://www.npmjs.com/package/qrcode)
+- [@fontsource-variable/onest](https://www.npmjs.com/package/@fontsource-variable/onest)
 
 ## Requisitos previos
 
-- [Node.js](https://nodejs.org/) (version LTS recomendada)
-- [pnpm](https://pnpm.io/) (el proyecto usa `pnpm@10`)
+- [Node.js](https://nodejs.org/) (LTS recomendado)
+- [pnpm](https://pnpm.io/)
+
+> Este proyecto usa `pnpm@10` (ver `packageManager` en `package.json`).
 
 ## Instalacion y ejecucion local
 
@@ -45,61 +73,77 @@ pnpm install
 pnpm dev
 ```
 
-4. Abre en el navegador:
+4. Abre la app en tu navegador:
 
 ```text
 http://localhost:4321
 ```
 
-## Scripts disponibles
-
-- `pnpm dev`: inicia el entorno de desarrollo.
-- `pnpm build`: crea el build de produccion en `dist/`.
-- `pnpm preview`: sirve localmente el build generado.
-- `pnpm astro`: ejecuta comandos CLI de Astro.
-
 ## Como usar la aplicacion
 
-1. Elige un prefijo internacional.
-2. Escribe el numero de telefono.
-3. (Opcional) Escribe un mensaje.
-4. Haz clic en `Generar enlace`.
-5. Copia el enlace generado y compartelo donde lo necesites.
+1. Selecciona un **prefijo internacional**.
+2. Escribe el **numero de telefono** (10 digitos).
+3. (Opcional) Escribe un **mensaje**.
+4. Haz clic en **Generar enlace**.
+5. Usa el boton **Copiar** para enviar el link.
+6. (Opcional) Descarga el **QR** con el boton **Descargar**.
 
-Ejemplo de salida:
+Ejemplo de enlace generado:
 
 ```text
-https://wa.me/521234567890?text=Hola%20quiero%20mas%20informacion
+https://wa.me/521234567890?text=Hola%2C%20quiero%20mas%20informacion
 ```
+
+## Scripts disponibles
+
+- `pnpm dev`: levanta el entorno de desarrollo.
+- `pnpm build`: genera el build de produccion en `dist/`.
+- `pnpm preview`: sirve localmente el build generado.
+- `pnpm astro`: ejecuta comandos del CLI de Astro.
 
 ## Estructura del proyecto
 
 ```text
 .
-├── public/                     # Iconos e imagenes estaticas
+├── public/                        # Imagenes e iconos estaticos
 ├── src/
 │   ├── components/
-│   │   ├── Converter.astro     # Formulario y logica principal
-│   │   ├── icons/              # Iconos de la interfaz
-│   │   └── layout/             # Navbar y Footer
+│   │   ├── Converter.astro        # UI y logica principal (formulario, link, QR)
+│   │   ├── icons/                 # Componentes de iconos
+│   │   └── layout/
+│   │       ├── Navbar.astro       # Barra superior
+│   │       └── Footer.astro       # Pie de pagina
 │   ├── Layouts/
-│   │   └── Layout.astro        # Estructura base de la pagina
+│   │   └── Layout.astro           # Estructura base del sitio
 │   ├── pages/
-│   │   └── index.astro         # Ruta principal
+│   │   └── index.astro            # Pagina principal
 │   ├── styles/
-│   │   └── global.css          # Import de Tailwind
+│   │   └── global.css             # Import global de Tailwind
 │   └── utils/
-│       └── constants.js        # Lista de prefijos telefonicos
+│       └── constants.js           # Lista de paises y prefijos
 ├── astro.config.mjs
 ├── package.json
 └── README.md
 ```
 
-## Notas para desarrollo
+## Detalles tecnicos importantes
 
-- La validacion actual del telefono exige 10 digitos para habilitar el boton de generar.
-- El mensaje se codifica reemplazando espacios por `%20`.
-- El listado de prefijos se mantiene en `src/utils/constants.js`.
+- El boton **Generar enlace** se habilita cuando:
+  - Hay un prefijo seleccionado.
+  - El telefono tiene exactamente 10 digitos.
+- El input de telefono elimina caracteres no numericos automaticamente.
+- El mensaje se codifica con `encodeURIComponent`.
+- El QR se genera en cliente y se muestra dentro de `#qrcode`.
+- El boton de descarga toma la imagen QR renderizada y la guarda como `qr-512x512.png`.
+
+## Personalizacion rapida
+
+- Cambiar o ampliar prefijos:
+  - Edita `src/utils/constants.js`.
+- Ajustar validacion de telefono:
+  - Edita la logica en `src/components/Converter.astro` (eventos de `input`/`change`).
+- Cambiar estilos globales:
+  - Edita `src/styles/global.css` y clases Tailwind en componentes.
 
 ## Autor
 
