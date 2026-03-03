@@ -7,6 +7,7 @@ import Camera from "./icons/Camera.astro";
 import Microphone from "./icons/Microphone.astro";
 import Paperclip from "./icons/Paperclip.astro";
 import MoodSmile from "./icons/MoodSmile.astro";
+import Download from "./icons/Download.astro";
 
 import { phone_prefixes } from "../utils/constants.js";
 ---
@@ -75,14 +76,30 @@ import { phone_prefixes } from "../utils/constants.js";
         >
         <span
           id="waLink"
-          class="w-full bg-white text-center text-gray-500 py-3 px-4"></span>
+          class="w-full bg-white text-center text-gray-500 py-3 px-4 break-all"
+        >
+        </span>
       </div>
     </form>
   </div>
-  <div class="hidden sm:block">
+  <div class="sm:block">
+    <!-- Qr -->
+    <div id="qrContainer" class="hidden flex-col items-center justify-center gap-y-4 pb-5">
+      <div class="w-full px-5">
+        <a class="flex items-center justify-center bg-green-300 hover:bg-green-400 hover:cursor-pointer active:bg-green-500 active:scale-95 transition duration-75 py-2" href="#" id="downloadQr"
+          ><Download /> <span>Descargar</span></a
+        >
+      </div>
+      <div
+        class="flex items-center justify-center bg-white rounded-lg shadow p-3"
+        id="qrcode"
+      >
+      </div>
+    </div>
     <!-- Phone -->
     <div
-      class="relative max-w-72 min-h-120 mx-auto border-4 border-black rounded-3xl bg-orange-50 shadow"
+      id="phoneContainer"
+      class="hidden sm:block relative max-w-72 min-h-120 mx-auto border-4 border-black rounded-3xl bg-orange-50 shadow"
     >
       <!-- header -->
       <div
@@ -175,6 +192,8 @@ import { phone_prefixes } from "../utils/constants.js";
 </style>
 
 <script>
+  import QRcode from "qrcode";
+
   const selPrefijo = document.getElementById("prefijo") as HTMLSelectElement;
   const numPhone = document.getElementById("celNumber") as HTMLInputElement;
   const areaMessage = document.getElementById("message") as HTMLInputElement;
@@ -191,6 +210,12 @@ import { phone_prefixes } from "../utils/constants.js";
   const btnCopy = document.getElementById("btnCopy") as HTMLButtonElement;
 
   let spanError = document.getElementById("phone-error") as HTMLSpanElement;
+
+  const qrContainer = document.getElementById("qrContainer") as HTMLElement;
+  const qrcode = document.getElementById("qrcode") as HTMLElement;
+  const phoneContainer = document.getElementById("phoneContainer") as HTMLElement;
+
+  const btnDownload = document.getElementById("downloadQr") as HTMLAnchorElement
 
   document.addEventListener("DOMContentLoaded", () => {
     numPhone.addEventListener("input", () => {
@@ -240,23 +265,40 @@ import { phone_prefixes } from "../utils/constants.js";
       }
     });
 
-    btnGenerate.addEventListener("click", (e) => {
+    btnGenerate.addEventListener("click", async (e) => {
       e.preventDefault();
 
       const prefijo = selPrefijo.value.replace("+", "");
-      const phone = numPhone.value.replace(" ", "");
-      const message = areaMessage.value.replaceAll(" ", "%20");
+      const phone = numPhone.value.replace(/\s+/g, "");
+      const message = areaMessage.value.trim();
 
       let whatasppLink = `https://wa.me/${prefijo}${phone}`;
 
       //Validaciones
 
       if (message !== "") {
-        whatasppLink = whatasppLink + "?text=" + message;
+        whatasppLink += `?text=${encodeURIComponent(message)}`;
       }
 
       divLinkContainer.classList.replace("hidden", "flex");
       txtWhatsAppLink.innerHTML = whatasppLink;
+
+      qrContainer.classList.replace("hidden", "flex")
+
+      const qr = await QRcode.toDataURL(whatasppLink, {
+        width: 512,
+        margin: 0,
+        errorCorrectionLevel: "M",
+        type: "image/png",
+      });
+      const img = document.createElement("img");
+      img.id = "qrWhats"
+      img.src = qr;
+      img.style.width = "125px";
+      img.style.height = "125px";
+
+      qrcode.appendChild(img);
+
       return;
     });
 
@@ -267,5 +309,12 @@ import { phone_prefixes } from "../utils/constants.js";
         btnCopy.textContent = "✅ Copiado!";
       } catch (e) {}
     });
+
+    btnDownload.addEventListener("click", (e) => {
+      const imgElement = document.getElementById("qrWhats") as HTMLImageElement;
+      btnDownload.href = imgElement.src;
+      btnDownload.download = "qr-512x512.png";
+      return
+    })
   });
 </script>
